@@ -25,6 +25,7 @@ def parse_args():
     # Args for experiment setup
     parser.add_argument('-t', '--trial', type=int, required=True,
                         help="trial ID")
+    print("good to first arg")
     parser.add_argument('--exp_name', type=str, required=True,
                         help="experiment_name")
     parser.add_argument('--save_dir', type=str, required=False, default="results/",
@@ -53,7 +54,6 @@ def parse_args():
                         help="dimension of output of each frame (usually equal to num_labels")
     parser.add_argument('--num_labels', type=int, required=True, 
                         help="number of class labels")
-
     # Args for program graph
     parser.add_argument('--max_num_units', type=int, required=False, default=16,
                         help="max number of hidden units for neural programs")
@@ -142,14 +142,13 @@ def parse_args():
                         help='use node sharing is specific')
     parser.add_argument('--graph_unfold', action='store_true', required=False, default=False,\
                         help='use node sharing is specific')
-
     return parser.parse_args()
 
-
+print("test")
 if __name__ == '__main__':
     args = parse_args()
-
-    if 'crim13' in args.exp_name:
+    print(args.exp_name)
+    if 'crim' in args.exp_name:
         print('crim13 experiment')
         from dsl_crim13 import DSL_DICT, CUSTOM_EDGE_COSTS
     elif 'basket' in args.exp_name:
@@ -158,6 +157,8 @@ if __name__ == '__main__':
         from dsl_sk152 import DSL_DICT, CUSTOM_EDGE_COSTS
     elif 'fly' in args.exp_name:
         from dsl_fly import DSL_DICT, CUSTOM_EDGE_COSTS
+    elif 'inv' in args.exp_name:
+        from dsl_inv import DSL_DICT, CUSTOM_EDGE_COSTS
     else:
         print('undefined experiment')
         exit(0)
@@ -243,6 +244,7 @@ if __name__ == '__main__':
 
     # specific: [[search N, train_depth], ...] (basketball)
     # basketball
+    print(args)
     if 'basket' in args.exp_name:
         specific = [[None, 2, 0.02, 10], [4, 2, 0.01, 6], [3, 2, 0.001, 6], [2, 2, 0.001, 3], \
                     [None, 4, 0.02, 3], [4, 4, 0.01, 3], [3, 4, 0.001, 3], ["astar", 4, 0.02, args.neural_epochs]]
@@ -324,6 +326,33 @@ if __name__ == '__main__':
         }
     # fly
     elif 'fly' in args.exp_name:
+        specific = [[None, 2, 0.001, 5], [4, 2, 0.0005, 3], [3, 2, 0.0005, 3], [2, 2, 0.0005, 3], \
+                    [None, 4, 0.0005, 5], [4, 4, 0.0005, 3], [3,4, 0.0005, 3], ["astar", 4, 0.0005, args.neural_epochs]]
+        if not args.graph_unfold:
+            specific = [[None, 4, 0.001, 5], [4, 4, 0.0005, 3], [3, 4, 0.0005, 3], [2, 4, 0.0005, 3], ["astar", 4, 0.0005, args.neural_epochs]]
+        train_config = {
+            'node_share' : args.node_share,
+            'arch_lr' : args.search_learning_rate,
+            'model_lr' : args.search_learning_rate, 
+            'train_lr' : args.learning_rate,
+            'search_epoches' : args.neural_epochs,
+            'finetune_epoches' : args.symbolic_epochs,
+            'arch_optim' : optim.Adam,
+            'model_optim' : optim.Adam,
+            'lossfxn' : lossfxn,
+            'evalfxn' : label_correctness,
+            'num_labels' : args.num_labels,
+            'save_path' : save_path,
+            'topN' : args.topN_select,
+            'arch_weight_decay' : 0,
+            'model_weight_decay' : 0,
+            'penalty' : args.penalty,
+            'secorder' : args.sec_order,
+            'specific' : [[None, 2, 0.001, 5], [4, 2, 0.0005, 3], [3, 2, 0.0005, 3], [2, 2, 0.0005, 3], \
+                    [None, 4, 0.0005, 5], [4, 4, 0.0005, 3], [3,4, 0.0005, 3], ["astar", 4, 0.0005, args.neural_epochs]]
+        }
+    # inv
+    elif 'inv' in args.exp_name:
         specific = [[None, 2, 0.001, 5], [4, 2, 0.0005, 3], [3, 2, 0.0005, 3], [2, 2, 0.0005, 3], \
                     [None, 4, 0.0005, 5], [4, 4, 0.0005, 3], [3,4, 0.0005, 3], ["astar", 4, 0.0005, args.neural_epochs]]
         if not args.graph_unfold:
