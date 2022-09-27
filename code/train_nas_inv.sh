@@ -3,12 +3,12 @@ train_inv_specific(){
     --algorithm nas \
     --exp_name inv_spec_seed0 \
     --trial 1 \
-    --train_data data/inv_processed/train_inv_data.npy \
-    --valid_data data/inv_processed/valid_inv_data.npy \
-    --test_data data/inv_processed/test_inv_data.npy \
-    --train_labels data/inv_processed/train_inv_labels.npy \
-    --valid_labels data/inv_processed/valid_inv_labels.npy \
-    --test_labels data/inv_processed/test_inv_labels.npy \
+    --train_data inv_processed/train_inv_data.npy \
+    --valid_data inv_processed/valid_inv_data.npy \
+    --test_data inv_processed/test_inv_data.npy \
+    --train_labels inv_processed/train_inv_labels.npy \
+    --valid_labels inv_processed/valid_inv_labels.npy \
+    --test_labels inv_processed/test_inv_labels.npy \
     --input_type "list" \
     --output_type "atom" \
     --input_size 2 \
